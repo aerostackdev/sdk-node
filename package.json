@@ -1,25 +1,122 @@
 {
-    "name": "@aerostack/sdks",
-    "version": "0.1.0",
-    "private": true,
-    "description": "Aerostack SDK monorepo - Multi-language SDK generation",
-    "workspaces": [
-        "packages/*"
+  "name": "@aerostack/sdk-node",
+  "version": "0.1.0",
+  "author": "Aerostack",
+  "type": "module",
+  "tshy": {
+    "sourceDialects": [
+      "@aerostack/sdk-node/source"
     ],
-    "scripts": {
-        "generate": "./scripts/generate.sh",
-        "sync": "./scripts/sync.sh",
-        "build": "npm run build --workspace=@aerostack/sdk-node && npm run build --workspace=@aerostack/sdk-web && npm run build --workspace=@aerostack/react",
-        "test": "npm test --workspaces",
-        "publish:all": "./scripts/publish.sh"
-    },
-    "devDependencies": {
-        "@types/node": "^20.0.0",
-        "typescript": "^5.3.0",
-        "vitest": "^1.0.0",
-        "openai": "^4.28.0",
-        "dotenv": "^16.4.5",
-        "js-yaml": "^4.1.0",
-        "@types/js-yaml": "^4.0.9"
+    "exports": {
+      ".": "./src/index.ts",
+      "./package.json": "./package.json",
+      "./sdk/types": "./src/sdk/types/index.ts",
+      "./sdk/models/errors": "./src/sdk/models/errors/index.ts",
+      "./sdk/models/shared": "./src/sdk/models/shared/index.ts",
+      "./sdk/models/operations": "./src/sdk/models/operations/index.ts",
+      "./*.js": "./src/*.ts",
+      "./*": "./src/*.ts"
     }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint --cache --max-warnings=0 src",
+    "build": "tshy",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
+    "globals": "^15.14.0",
+    "tshy": "^2.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.26.0"
+  },
+  "dependencies": {
+    "zod": "^3.25.0 || ^4.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/index.ts",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./package.json": "./package.json",
+    "./sdk/types": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/sdk/types/index.ts",
+        "types": "./dist/esm/sdk/types/index.d.ts",
+        "default": "./dist/esm/sdk/types/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/sdk/types/index.d.ts",
+        "default": "./dist/commonjs/sdk/types/index.js"
+      }
+    },
+    "./sdk/models/errors": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/sdk/models/errors/index.ts",
+        "types": "./dist/esm/sdk/models/errors/index.d.ts",
+        "default": "./dist/esm/sdk/models/errors/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/sdk/models/errors/index.d.ts",
+        "default": "./dist/commonjs/sdk/models/errors/index.js"
+      }
+    },
+    "./sdk/models/shared": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/sdk/models/shared/index.ts",
+        "types": "./dist/esm/sdk/models/shared/index.d.ts",
+        "default": "./dist/esm/sdk/models/shared/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/sdk/models/shared/index.d.ts",
+        "default": "./dist/commonjs/sdk/models/shared/index.js"
+      }
+    },
+    "./sdk/models/operations": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/sdk/models/operations/index.ts",
+        "types": "./dist/esm/sdk/models/operations/index.d.ts",
+        "default": "./dist/esm/sdk/models/operations/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/sdk/models/operations/index.d.ts",
+        "default": "./dist/commonjs/sdk/models/operations/index.js"
+      }
+    },
+    "./*.js": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/*.ts",
+        "types": "./dist/esm/*.d.ts",
+        "default": "./dist/esm/*.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/*.d.ts",
+        "default": "./dist/commonjs/*.js"
+      }
+    },
+    "./*": {
+      "import": {
+        "@aerostack/sdk-node/source": "./src/*.ts",
+        "types": "./dist/esm/*.d.ts",
+        "default": "./dist/esm/*.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/*.d.ts",
+        "default": "./dist/commonjs/*.js"
+      }
+    }
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "module": "./dist/esm/index.js"
 }
