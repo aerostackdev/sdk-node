@@ -3,6 +3,15 @@
   "version": "0.3.1",
   "author": "Aerostack",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aerostackdev/sdks.git",
+    "directory": "packages/node"
+  },
+  "bugs": {
+    "url": "https://github.com/aerostackdev/sdks/issues"
+  },
+  "homepage": "https://docs.aerostack.ai",
   "tshy": {
     "sourceDialects": [
       "@aerostack/sdk-node/source"
