@@ -12,5 +12,5 @@ let value: Messages = {};
 
 | Field                                                     | Type                                                      | Required                                                  | Description                                               |
 | --------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------- |
-| `content`                                                 | *string*                                                  | :heavy_minus_sign:                                        | N/A                                                       |
 | `role`                                                    | [operations.Role](../../../sdk/models/operations/role.md) | :heavy_minus_sign:                                        | N/A                                                       |
+| `content`                                                 | *string*                                                  | :heavy_minus_sign:                                        | N/A                                                       |

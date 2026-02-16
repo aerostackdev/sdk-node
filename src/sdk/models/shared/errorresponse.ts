@@ -18,10 +18,13 @@ export const Code = {
 } as const;
 export type Code = ClosedEnum<typeof Code>;
 
+/**
+ * Invalid request
+ */
 export type ErrorResponse = {
   code: Code;
-  details?: { [k: string]: any } | undefined;
   message: string;
+  details?: { [k: string]: any } | undefined;
 };
 
 /** @internal */
@@ -36,8 +39,8 @@ export const ErrorResponse$inboundSchema: z.ZodType<
   unknown
 > = z.object({
   code: Code$inboundSchema,
-  details: z.record(z.any()).optional(),
   message: z.string(),
+  details: z.record(z.any()).optional(),
 });
 
 export function errorResponseFromJSON(

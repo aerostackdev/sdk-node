@@ -6,10 +6,10 @@
 import { AiChatRequestBody } from "@aerostack/sdk-node/sdk/models/operations";
 
 let value: AiChatRequestBody = {
+  model: "@cf/meta/llama-3-8b-instruct",
   messages: [
     {},
   ],
-  model: "@cf/meta/llama-3-8b-instruct",
 };
 ```
 
@@ -17,5 +17,5 @@ let value: AiChatRequestBody = {
 
 | Field                                                               | Type                                                                | Required                                                            | Description                                                         | Example                                                             |
 | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `messages`                                                          | [operations.Messages](../../../sdk/models/operations/messages.md)[] | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |
 | `model`                                                             | *string*                                                            | :heavy_minus_sign:                                                  | N/A                                                                 | @cf/meta/llama-3-8b-instruct                                        |
+| `messages`                                                          | [operations.Messages](../../../sdk/models/operations/messages.md)[] | :heavy_check_mark:                                                  | N/A                                                                 |                                                                     |

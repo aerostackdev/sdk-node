@@ -24,10 +24,10 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.ai.aiChat({
+    model: "@cf/meta/llama-3-8b-instruct",
     messages: [
       {},
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -52,10 +52,10 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await aiAIChat(sdk, {
+    model: "@cf/meta/llama-3-8b-instruct",
     messages: [
       {},
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
   if (res.ok) {
     const { value: result } = res;

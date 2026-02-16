@@ -20,7 +20,7 @@ specific category of applications.
 
 ```typescript
 import { SDKCore } from "@aerostack/sdk-node/core.js";
-import { aiAIChat } from "@aerostack/sdk-node/funcs/aiAIChat.js";
+import { databaseDbQuery } from "@aerostack/sdk-node/funcs/databaseDbQuery.js";
 
 // Use `SDKCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -29,17 +29,17 @@ const sdk = new SDKCore({
 });
 
 async function run() {
-  const res = await aiAIChat(sdk, {
-    messages: [
-      {},
+  const res = await databaseDbQuery(sdk, {
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("aiAIChat failed:", res.error);
+    console.log("databaseDbQuery failed:", res.error);
   }
 }
 

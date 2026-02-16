@@ -7,11 +7,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);

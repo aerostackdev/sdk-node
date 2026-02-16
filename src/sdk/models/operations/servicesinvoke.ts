@@ -8,22 +8,22 @@ import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type ServicesInvokeRequestBody = {
-  data: { [k: string]: any };
   serviceName: string;
+  data: { [k: string]: any };
 };
 
 /**
  * Service invoked successfully
  */
 export type ServicesInvokeResponseBody = {
-  result?: any | undefined;
   success?: boolean | undefined;
+  result?: any | undefined;
 };
 
 /** @internal */
 export type ServicesInvokeRequestBody$Outbound = {
-  data: { [k: string]: any };
   serviceName: string;
+  data: { [k: string]: any };
 };
 
 /** @internal */
@@ -32,8 +32,8 @@ export const ServicesInvokeRequestBody$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   ServicesInvokeRequestBody
 > = z.object({
-  data: z.record(z.any()),
   serviceName: z.string(),
+  data: z.record(z.any()),
 });
 
 export function servicesInvokeRequestBodyToJSON(
@@ -50,8 +50,8 @@ export const ServicesInvokeResponseBody$inboundSchema: z.ZodType<
   z.ZodTypeDef,
   unknown
 > = z.object({
-  result: z.any().optional(),
   success: z.boolean().optional(),
+  result: z.any().optional(),
 });
 
 export function servicesInvokeResponseBodyFromJSON(

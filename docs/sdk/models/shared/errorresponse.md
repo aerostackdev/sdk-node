@@ -1,5 +1,7 @@
 # ErrorResponse
 
+Invalid request
+
 ## Example Usage
 
 ```typescript
@@ -16,5 +18,5 @@ let value: ErrorResponse = {
 | Field                                             | Type                                              | Required                                          | Description                                       |
 | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
 | `code`                                            | [shared.Code](../../../sdk/models/shared/code.md) | :heavy_check_mark:                                | N/A                                               |
-| `details`                                         | Record<string, *any*>                             | :heavy_minus_sign:                                | N/A                                               |
 | `message`                                         | *string*                                          | :heavy_check_mark:                                | N/A                                               |
+| `details`                                         | Record<string, *any*>                             | :heavy_minus_sign:                                | N/A                                               |

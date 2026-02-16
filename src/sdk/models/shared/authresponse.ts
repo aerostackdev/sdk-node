@@ -9,12 +9,12 @@ import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 import { User, User$inboundSchema } from "./user.js";
 
 export type AuthResponse = {
-  expiresAt?: Date | undefined;
   /**
    * JWT authentication token
    */
   token?: string | undefined;
   user?: User | undefined;
+  expiresAt?: Date | undefined;
 };
 
 /** @internal */
@@ -23,10 +23,10 @@ export const AuthResponse$inboundSchema: z.ZodType<
   z.ZodTypeDef,
   unknown
 > = z.object({
-  expiresAt: z.string().datetime({ offset: true }).transform(v => new Date(v))
-    .optional(),
   token: z.string().optional(),
   user: User$inboundSchema.optional(),
+  expiresAt: z.string().datetime({ offset: true }).transform(v => new Date(v))
+    .optional(),
 });
 
 export function authResponseFromJSON(

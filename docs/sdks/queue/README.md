@@ -24,11 +24,11 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.queue.queueEnqueue({
+    type: "send-email",
     data: {
       "key": "<value>",
     },
     delay: 60,
-    type: "send-email",
   });
 
   console.log(result);
@@ -53,11 +53,11 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await queueQueueEnqueue(sdk, {
+    type: "send-email",
     data: {
       "key": "<value>",
     },
     delay: 60,
-    type: "send-email",
   });
   if (res.ok) {
     const { value: result } = res;

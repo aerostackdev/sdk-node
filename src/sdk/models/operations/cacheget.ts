@@ -15,8 +15,8 @@ export type CacheGetRequestBody = {
  * Cache value retrieved
  */
 export type CacheGetResponseBody = {
-  exists?: boolean | undefined;
   value?: any | null | undefined;
+  exists?: boolean | undefined;
 };
 
 /** @internal */
@@ -47,8 +47,8 @@ export const CacheGetResponseBody$inboundSchema: z.ZodType<
   z.ZodTypeDef,
   unknown
 > = z.object({
-  exists: z.boolean().optional(),
   value: z.nullable(z.any()).optional(),
+  exists: z.boolean().optional(),
 });
 
 export function cacheGetResponseBodyFromJSON(

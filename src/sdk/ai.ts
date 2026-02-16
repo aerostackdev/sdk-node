@@ -5,9 +5,15 @@
 import { aiAIChat } from "../funcs/aiAIChat.js";
 import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as operations from "./models/operations/index.js";
+import { Search } from "./search.js";
 import { unwrapAsync } from "./types/fp.js";
 
 export class Ai extends ClientSDK {
+  private _search?: Search;
+  get search(): Search {
+    return (this._search ??= new Search(this._options));
+  }
+
   /**
    * Generate AI chat completion
    */

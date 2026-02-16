@@ -10,21 +10,21 @@ import * as shared from "../shared/index.js";
 
 export type DbQueryRequestBody = {
   /**
-   * Query parameters for prepared statements
-   */
-  params?: Array<any> | undefined;
-  /**
    * SQL query to execute
    */
   sql: string;
+  /**
+   * Query parameters for prepared statements
+   */
+  params?: Array<any> | undefined;
 };
 
 export type DbQueryResponse = shared.ErrorResponse | shared.DbQueryResult;
 
 /** @internal */
 export type DbQueryRequestBody$Outbound = {
-  params?: Array<any> | undefined;
   sql: string;
+  params?: Array<any> | undefined;
 };
 
 /** @internal */
@@ -33,8 +33,8 @@ export const DbQueryRequestBody$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   DbQueryRequestBody
 > = z.object({
-  params: z.array(z.any()).optional(),
   sql: z.string(),
+  params: z.array(z.any()).optional(),
 });
 
 export function dbQueryRequestBodyToJSON(

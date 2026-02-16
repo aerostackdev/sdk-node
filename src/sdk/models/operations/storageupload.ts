@@ -9,17 +9,17 @@ import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type FileT = {
-  content: ReadableStream<Uint8Array> | Blob | ArrayBuffer | Uint8Array;
   fileName: string;
+  content: ReadableStream<Uint8Array> | Blob | ArrayBuffer | Uint8Array;
 };
 
 export type StorageUploadRequestBody = {
-  contentType?: string | undefined;
   file: FileT | Blob;
   /**
    * Storage key/path
    */
   key: string;
+  contentType?: string | undefined;
 };
 
 /**
@@ -31,8 +31,8 @@ export type StorageUploadResponseBody = {
 
 /** @internal */
 export type FileT$Outbound = {
-  content: ReadableStream<Uint8Array> | Blob | ArrayBuffer | Uint8Array;
   fileName: string;
+  content: ReadableStream<Uint8Array> | Blob | ArrayBuffer | Uint8Array;
 };
 
 /** @internal */
@@ -41,13 +41,13 @@ export const FileT$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   FileT
 > = z.object({
+  fileName: z.string(),
   content: z.union([
     z.instanceof(ReadableStream<Uint8Array>),
     z.instanceof(Blob),
     z.instanceof(ArrayBuffer),
     z.instanceof(Uint8Array),
   ]),
-  fileName: z.string(),
 });
 
 export function fileToJSON(fileT: FileT): string {
@@ -56,9 +56,9 @@ export function fileToJSON(fileT: FileT): string {
 
 /** @internal */
 export type StorageUploadRequestBody$Outbound = {
-  contentType?: string | undefined;
   file: FileT$Outbound | Blob;
   key: string;
+  contentType?: string | undefined;
 };
 
 /** @internal */
@@ -67,9 +67,9 @@ export const StorageUploadRequestBody$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   StorageUploadRequestBody
 > = z.object({
-  contentType: z.string().optional(),
   file: z.lazy(() => FileT$outboundSchema).or(blobLikeSchema),
   key: z.string(),
+  contentType: z.string().optional(),
 });
 
 export function storageUploadRequestBodyToJSON(

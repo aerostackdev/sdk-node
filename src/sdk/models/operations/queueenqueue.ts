@@ -8,12 +8,12 @@ import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type QueueEnqueueRequestBody = {
+  type: string;
   data: { [k: string]: any };
   /**
    * Delay in seconds before processing
    */
   delay?: number | undefined;
-  type: string;
 };
 
 /**
@@ -26,9 +26,9 @@ export type QueueEnqueueResponseBody = {
 
 /** @internal */
 export type QueueEnqueueRequestBody$Outbound = {
+  type: string;
   data: { [k: string]: any };
   delay?: number | undefined;
-  type: string;
 };
 
 /** @internal */
@@ -37,9 +37,9 @@ export const QueueEnqueueRequestBody$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   QueueEnqueueRequestBody
 > = z.object({
+  type: z.string(),
   data: z.record(z.any()),
   delay: z.number().int().optional(),
-  type: z.string(),
 });
 
 export function queueEnqueueRequestBodyToJSON(

@@ -24,10 +24,10 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
     params: [
       true,
     ],
-    sql: "SELECT * FROM users WHERE active = ?",
   });
 
   console.log(result);
@@ -52,10 +52,10 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await databaseDbQuery(sdk, {
+    sql: "SELECT * FROM users WHERE active = ?",
     params: [
       true,
     ],
-    sql: "SELECT * FROM users WHERE active = ?",
   });
   if (res.ok) {
     const { value: result } = res;

@@ -10,20 +10,6 @@ import { unwrapAsync } from "./types/fp.js";
 
 export class Authentication extends ClientSDK {
   /**
-   * Sign in user
-   */
-  async authSignin(
-    request: operations.AuthSigninRequestBody,
-    options?: RequestOptions,
-  ): Promise<operations.AuthSigninResponse> {
-    return unwrapAsync(authenticationAuthSignin(
-      this,
-      request,
-      options,
-    ));
-  }
-
-  /**
    * Sign up new user
    */
   async authSignup(
@@ -31,6 +17,20 @@ export class Authentication extends ClientSDK {
     options?: RequestOptions,
   ): Promise<operations.AuthSignupResponse> {
     return unwrapAsync(authenticationAuthSignup(
+      this,
+      request,
+      options,
+    ));
+  }
+
+  /**
+   * Sign in user
+   */
+  async authSignin(
+    request: operations.AuthSigninRequestBody,
+    options?: RequestOptions,
+  ): Promise<operations.AuthSigninResponse> {
+    return unwrapAsync(authenticationAuthSignin(
       this,
       request,
       options,

@@ -12,5 +12,5 @@ import { FileT } from "@aerostack/sdk-node/sdk/models/operations";
 
 | Field                        | Type                         | Required                     | Description                  |
 | ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- |
-| `content`                    | *ReadableStream<Uint8Array>* | :heavy_check_mark:           | N/A                          |
 | `fileName`                   | *string*                     | :heavy_check_mark:           | N/A                          |
+| `content`                    | *ReadableStream<Uint8Array>* | :heavy_check_mark:           | N/A                          |

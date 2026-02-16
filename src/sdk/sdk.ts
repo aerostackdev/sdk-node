@@ -12,9 +12,9 @@ import { Services } from "./services.js";
 import { Storage } from "./storage.js";
 
 export class SDK extends ClientSDK {
-  private _ai?: Ai;
-  get ai(): Ai {
-    return (this._ai ??= new Ai(this._options));
+  private _database?: Database;
+  get database(): Database {
+    return (this._database ??= new Database(this._options));
   }
 
   private _authentication?: Authentication;
@@ -27,23 +27,23 @@ export class SDK extends ClientSDK {
     return (this._cache ??= new Cache(this._options));
   }
 
-  private _database?: Database;
-  get database(): Database {
-    return (this._database ??= new Database(this._options));
-  }
-
   private _queue?: Queue;
   get queue(): Queue {
     return (this._queue ??= new Queue(this._options));
   }
 
-  private _services?: Services;
-  get services(): Services {
-    return (this._services ??= new Services(this._options));
-  }
-
   private _storage?: Storage;
   get storage(): Storage {
     return (this._storage ??= new Storage(this._options));
+  }
+
+  private _ai?: Ai;
+  get ai(): Ai {
+    return (this._ai ??= new Ai(this._options));
+  }
+
+  private _services?: Services;
+  get services(): Services {
+    return (this._services ??= new Services(this._options));
   }
 }

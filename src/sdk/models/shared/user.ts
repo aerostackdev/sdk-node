@@ -8,22 +8,22 @@ import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type User = {
-  createdAt?: Date | undefined;
-  email?: string | undefined;
   id?: string | undefined;
-  metadata?: { [k: string]: any } | undefined;
+  email?: string | undefined;
   name?: string | null | undefined;
+  createdAt?: Date | undefined;
+  metadata?: { [k: string]: any } | undefined;
 };
 
 /** @internal */
 export const User$inboundSchema: z.ZodType<User, z.ZodTypeDef, unknown> = z
   .object({
+    id: z.string().optional(),
+    email: z.string().optional(),
+    name: z.nullable(z.string()).optional(),
     createdAt: z.string().datetime({ offset: true }).transform(v => new Date(v))
       .optional(),
-    email: z.string().optional(),
-    id: z.string().optional(),
     metadata: z.record(z.any()).optional(),
-    name: z.nullable(z.string()).optional(),
   });
 
 export function userFromJSON(

@@ -9,11 +9,11 @@ import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type CacheSetRequestBody = {
   key: string;
+  value?: any | undefined;
   /**
    * Time to live in seconds
    */
   ttl?: number | undefined;
-  value?: any | undefined;
 };
 
 /**
@@ -26,8 +26,8 @@ export type CacheSetResponseBody = {
 /** @internal */
 export type CacheSetRequestBody$Outbound = {
   key: string;
-  ttl?: number | undefined;
   value?: any | undefined;
+  ttl?: number | undefined;
 };
 
 /** @internal */
@@ -37,8 +37,8 @@ export const CacheSetRequestBody$outboundSchema: z.ZodType<
   CacheSetRequestBody
 > = z.object({
   key: z.string(),
-  ttl: z.number().int().optional(),
   value: z.any().optional(),
+  ttl: z.number().int().optional(),
 });
 
 export function cacheSetRequestBodyToJSON(

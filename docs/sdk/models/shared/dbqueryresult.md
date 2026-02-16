@@ -12,5 +12,5 @@ let value: DbQueryResult = {};
 
 | Field                   | Type                    | Required                | Description             |
 | ----------------------- | ----------------------- | ----------------------- | ----------------------- |
-| `count`                 | *number*                | :heavy_minus_sign:      | N/A                     |
 | `results`               | Record<string, *any*>[] | :heavy_minus_sign:      | N/A                     |
+| `count`                 | *number*                | :heavy_minus_sign:      | N/A                     |

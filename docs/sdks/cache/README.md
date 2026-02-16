@@ -99,8 +99,8 @@ const sdk = new SDK({
 async function run() {
   const result = await sdk.cache.cacheSet({
     key: "<key>",
-    ttl: 3600,
     value: "<value>",
+    ttl: 3600,
   });
 
   console.log(result);
@@ -126,8 +126,8 @@ const sdk = new SDKCore({
 async function run() {
   const res = await cacheCacheSet(sdk, {
     key: "<key>",
-    ttl: 3600,
     value: "<value>",
+    ttl: 3600,
   });
   if (res.ok) {
     const { value: result } = res;

@@ -24,11 +24,11 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.services.servicesInvoke({
+    serviceName: "billing-webhook",
     data: {
       "key": "<value>",
       "key1": "<value>",
     },
-    serviceName: "billing-webhook",
   });
 
   console.log(result);
@@ -53,11 +53,11 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await servicesServicesInvoke(sdk, {
+    serviceName: "billing-webhook",
     data: {
       "key": "<value>",
       "key1": "<value>",
     },
-    serviceName: "billing-webhook",
   });
   if (res.ok) {
     const { value: result } = res;

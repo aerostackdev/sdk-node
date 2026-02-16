@@ -42,6 +42,7 @@ caching, queues, storage, and AI services.
 > [!TIP]
 > To finish publishing your SDK to npm and others you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
 
+
 The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [bun](https://bun.sh/) or [yarn](https://classic.yarnpkg.com/en/) package managers.
 
 ### NPM
@@ -91,11 +92,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -126,11 +127,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -151,10 +152,19 @@ run();
 
 * [aiChat](docs/sdks/ai/README.md#aichat) - Generate AI chat completion
 
+### [Ai.Search](docs/sdks/search/README.md)
+
+* [ingest](docs/sdks/search/README.md#ingest) - Ingest content into managed search index
+* [query](docs/sdks/search/README.md#query) - Search managed index
+* [delete](docs/sdks/search/README.md#delete) - Delete item by ID
+* [deleteByType](docs/sdks/search/README.md#deletebytype) - Delete all items of a type
+* [listTypes](docs/sdks/search/README.md#listtypes) - List distinct types and counts
+* [configure](docs/sdks/search/README.md#configure) - Update search configuration
+
 ### [Authentication](docs/sdks/authentication/README.md)
 
-* [authSignin](docs/sdks/authentication/README.md#authsignin) - Sign in user
 * [authSignup](docs/sdks/authentication/README.md#authsignup) - Sign up new user
+* [authSignin](docs/sdks/authentication/README.md#authsignin) - Sign in user
 
 ### [Cache](docs/sdks/cache/README.md)
 
@@ -196,6 +206,12 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 <summary>Available standalone functions</summary>
 
 - [`aiAIChat`](docs/sdks/ai/README.md#aichat) - Generate AI chat completion
+- [`aiSearchConfigure`](docs/sdks/search/README.md#configure) - Update search configuration
+- [`aiSearchDelete`](docs/sdks/search/README.md#delete) - Delete item by ID
+- [`aiSearchDeleteByType`](docs/sdks/search/README.md#deletebytype) - Delete all items of a type
+- [`aiSearchIngest`](docs/sdks/search/README.md#ingest) - Ingest content into managed search index
+- [`aiSearchListTypes`](docs/sdks/search/README.md#listtypes) - List distinct types and counts
+- [`aiSearchQuery`](docs/sdks/search/README.md#query) - Search managed index
 - [`authenticationAuthSignin`](docs/sdks/authentication/README.md#authsignin) - Sign in user
 - [`authenticationAuthSignup`](docs/sdks/authentication/README.md#authsignup) - Sign up new user
 - [`cacheCacheGet`](docs/sdks/cache/README.md#cacheget) - Get cached value
@@ -232,9 +248,9 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.storage.storageUpload({
-    contentType: "image/jpeg",
     file: await openAsBlob("example.file"),
     key: "avatars/user-123.jpg",
+    contentType: "image/jpeg",
   });
 
   console.log(result);
@@ -259,11 +275,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   }, {
     retries: {
       strategy: "backoff",
@@ -303,11 +319,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -342,11 +358,11 @@ const sdk = new SDK({
 
 async function run() {
   try {
-    const result = await sdk.ai.aiChat({
-      messages: [
-        {},
+    const result = await sdk.database.dbQuery({
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
       ],
-      model: "@cf/meta/llama-3-8b-instruct",
     });
 
     console.log(result);
@@ -379,6 +395,7 @@ run();
 * [`InvalidRequestError`](./src/sdk/models/errors/httpclienterrors.ts): Any input used to create a request is invalid.
 * [`UnexpectedClientError`](./src/sdk/models/errors/httpclienterrors.ts): Unrecognised or unexpected error.
 
+
 **Inherit from [`SDKBaseError`](./src/sdk/models/errors/sdkbaseerror.ts)**:
 * [`ResponseValidationError`](./src/sdk/models/errors/responsevalidationerror.ts): Type mismatch between the data returned from the server and the structure expected by the SDK. See `error.rawValue` for the raw value and `error.pretty()` for a nicely formatted multi-line string.
 
@@ -408,11 +425,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -434,11 +451,11 @@ const sdk = new SDK({
 });
 
 async function run() {
-  const result = await sdk.ai.aiChat({
-    messages: [
-      {},
+  const result = await sdk.database.dbQuery({
+    sql: "SELECT * FROM users WHERE active = ?",
+    params: [
+      true,
     ],
-    model: "@cf/meta/llama-3-8b-instruct",
   });
 
   console.log(result);
@@ -532,3 +549,5 @@ looking for the latest version.
 While we value open-source contributions to this SDK, this library is generated programmatically. Any manual changes added to internal files will be overwritten on the next generation. 
 We look forward to hearing your feedback. Feel free to open a PR or an issue with a proof of concept and we'll do our best to include it in a future release. 
 
+
+<!-- Placeholder for Future Speakeasy SDK Sections -->

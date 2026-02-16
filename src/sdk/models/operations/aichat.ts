@@ -16,13 +16,13 @@ export const Role = {
 export type Role = ClosedEnum<typeof Role>;
 
 export type Messages = {
-  content?: string | undefined;
   role?: Role | undefined;
+  content?: string | undefined;
 };
 
 export type AiChatRequestBody = {
-  messages: Array<Messages>;
   model?: string | undefined;
+  messages: Array<Messages>;
 };
 
 /**
@@ -39,8 +39,8 @@ export const Role$outboundSchema: z.ZodNativeEnum<typeof Role> = z.nativeEnum(
 
 /** @internal */
 export type Messages$Outbound = {
-  content?: string | undefined;
   role?: string | undefined;
+  content?: string | undefined;
 };
 
 /** @internal */
@@ -49,8 +49,8 @@ export const Messages$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   Messages
 > = z.object({
-  content: z.string().optional(),
   role: Role$outboundSchema.optional(),
+  content: z.string().optional(),
 });
 
 export function messagesToJSON(messages: Messages): string {
@@ -59,8 +59,8 @@ export function messagesToJSON(messages: Messages): string {
 
 /** @internal */
 export type AiChatRequestBody$Outbound = {
-  messages: Array<Messages$Outbound>;
   model?: string | undefined;
+  messages: Array<Messages$Outbound>;
 };
 
 /** @internal */
@@ -69,8 +69,8 @@ export const AiChatRequestBody$outboundSchema: z.ZodType<
   z.ZodTypeDef,
   AiChatRequestBody
 > = z.object({
-  messages: z.array(z.lazy(() => Messages$outboundSchema)),
   model: z.string().optional(),
+  messages: z.array(z.lazy(() => Messages$outboundSchema)),
 });
 
 export function aiChatRequestBodyToJSON(

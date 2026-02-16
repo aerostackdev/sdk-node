@@ -14,5 +14,5 @@ let value: CacheGetResponseBody = {};
 
 | Field              | Type               | Required           | Description        |
 | ------------------ | ------------------ | ------------------ | ------------------ |
-| `exists`           | *boolean*          | :heavy_minus_sign: | N/A                |
 | `value`            | *any*              | :heavy_minus_sign: | N/A                |
+| `exists`           | *boolean*          | :heavy_minus_sign: | N/A                |

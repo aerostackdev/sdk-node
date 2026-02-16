@@ -14,5 +14,5 @@ let value: ServicesInvokeResponseBody = {};
 
 | Field              | Type               | Required           | Description        |
 | ------------------ | ------------------ | ------------------ | ------------------ |
-| `result`           | *any*              | :heavy_minus_sign: | N/A                |
 | `success`          | *boolean*          | :heavy_minus_sign: | N/A                |
+| `result`           | *any*              | :heavy_minus_sign: | N/A                |

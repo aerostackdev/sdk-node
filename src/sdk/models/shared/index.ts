@@ -5,5 +5,7 @@
 export * from "./authresponse.js";
 export * from "./dbqueryresult.js";
 export * from "./errorresponse.js";
+export * from "./searchresult.js";
 export * from "./security.js";
+export * from "./typestats.js";
 export * from "./user.js";

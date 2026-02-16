@@ -8,8 +8,8 @@ import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
 
 export type DbQueryResult = {
-  count?: number | undefined;
   results?: Array<{ [k: string]: any }> | undefined;
+  count?: number | undefined;
 };
 
 /** @internal */
@@ -18,8 +18,8 @@ export const DbQueryResult$inboundSchema: z.ZodType<
   z.ZodTypeDef,
   unknown
 > = z.object({
-  count: z.number().int().optional(),
   results: z.array(z.record(z.any())).optional(),
+  count: z.number().int().optional(),
 });
 
 export function dbQueryResultFromJSON(

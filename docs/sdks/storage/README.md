@@ -25,9 +25,9 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.storage.storageUpload({
-    contentType: "image/jpeg",
     file: await openAsBlob("example.file"),
     key: "avatars/user-123.jpg",
+    contentType: "image/jpeg",
   });
 
   console.log(result);
@@ -53,9 +53,9 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await storageStorageUpload(sdk, {
-    contentType: "image/jpeg",
     file: await openAsBlob("example.file"),
     key: "avatars/user-123.jpg",
+    contentType: "image/jpeg",
   });
   if (res.ok) {
     const { value: result } = res;

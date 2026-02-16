@@ -10,9 +10,9 @@ import * as shared from "../shared/index.js";
 
 export type AuthSignupRequestBody = {
   email: string;
-  metadata?: { [k: string]: any } | undefined;
-  name?: string | undefined;
   password: string;
+  name?: string | undefined;
+  metadata?: { [k: string]: any } | undefined;
 };
 
 export type AuthSignupResponse = shared.ErrorResponse | shared.AuthResponse;
@@ -20,9 +20,9 @@ export type AuthSignupResponse = shared.ErrorResponse | shared.AuthResponse;
 /** @internal */
 export type AuthSignupRequestBody$Outbound = {
   email: string;
-  metadata?: { [k: string]: any } | undefined;
-  name?: string | undefined;
   password: string;
+  name?: string | undefined;
+  metadata?: { [k: string]: any } | undefined;
 };
 
 /** @internal */
@@ -32,9 +32,9 @@ export const AuthSignupRequestBody$outboundSchema: z.ZodType<
   AuthSignupRequestBody
 > = z.object({
   email: z.string(),
-  metadata: z.record(z.any()).optional(),
-  name: z.string().optional(),
   password: z.string(),
+  name: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
 });
 
 export function authSignupRequestBodyToJSON(
