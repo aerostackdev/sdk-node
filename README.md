@@ -48,25 +48,25 @@ The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https
 ### NPM
 
 ```bash
-npm add <UNSET>
+npm add @aerostack/sdk-node
 ```
 
 ### PNPM
 
 ```bash
-pnpm add <UNSET>
+pnpm add @aerostack/sdk-node
 ```
 
 ### Bun
 
 ```bash
-bun add <UNSET>
+bun add @aerostack/sdk-node
 ```
 
 ### Yarn
 
 ```bash
-yarn add <UNSET>
+yarn add @aerostack/sdk-node
 ```
 
 > [!NOTE]
@@ -411,7 +411,7 @@ You can override the default server globally by passing a server index to the `s
 
 | #   | Server                        | Description       |
 | --- | ----------------------------- | ----------------- |
-| 0   | `https://api.aerostack.ai/v1` | Production        |
+| 0   | `https://api.aerostack.dev/v1` | Production        |
 | 1   | `http://localhost:8787/v1`    | Local Development |
 
 #### Example
