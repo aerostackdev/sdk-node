@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/aerostackdev/sdks/issues"
   },
-  "homepage": "https://docs.aerostack.ai",
+  "homepage": "https://docs.aerostack.dev",
   "tshy": {
     "sourceDialects": [
       "@aerostack/sdk-node/source"
