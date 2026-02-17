@@ -536,6 +536,58 @@ const sdk = new SDK({ debugLogger: console });
 ```
 <!-- End Debugging [debug] -->
 
+## Backend Service Integration
+
+> **SDK Type**: HTTP Client (API Calls)
+
+This SDK is an **HTTP client** that makes API calls to the Aerostack backend. It's ideal for:
+
+✅ **Use cases**:
+- Calling Aerostack Auth/E-commerce APIs from backend services (Node.js, Express, Nest.js)
+- Integrating Aerostack features into existing applications
+- Building API wrappers and middleware
+
+❌ **Not for**:
+- Direct access to Cloudflare bindings (D1, KV, Queue, R2) - use `@aerostack/sdk` Server SDK instead
+
+### Backend Wrapper Pattern
+
+If you're building a **Cloudflare Worker** that needs both API calls AND direct binding access, use both SDKs:
+
+```typescript
+// In a Cloudflare Worker
+import { AerostackServer } from '@aerostack/sdk'; // For DB/Queue/Storage bindings
+import { SDK as NodeSDK } from '@aerostack/node'; // For Auth/API calls
+
+export default {
+  async fetch(request: Request, env: Env) {
+    // Direct bindings (fast, no HTTP overhead)
+    const server = new AerostackServer(env);
+    
+    // HTTP API client (for Auth, etc.)
+    const client = new NodeSDK({
+      apiKeyAuth: env.AEROSTACK_API_KEY,
+      serverURL: 'https://api.aerostack.dev/v1'
+    });
+
+    // Use both together
+    const authResult = await client.authentication.authSignin({
+      email: "user@example.com",
+      password: "password"
+    });
+
+    await server.db.query(
+      'INSERT INTO audit_logs (user_id, action) VALUES (?, ?)',
+      [authResult.user.id, 'login']
+    );
+
+    return Response.json(authResult);
+  }
+};
+```
+
+For non-Worker backends (Node.js, Vercel, etc.), you only need this SDK.
+
 # Development
 
 ## Maturity
