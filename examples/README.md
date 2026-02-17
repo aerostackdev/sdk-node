@@ -16,6 +16,16 @@ This directory contains example scripts demonstrating how to use the @aerostack/
 
 2. Edit `.env` and add your actual credentials
 
+## Available Examples
+
+| Example | Description |
+|---------|-------------|
+| [**Express Integration**](./express-integration.ts) | Using SDK as middleware in an Express app. |
+| [**Next.js API Route**](./next-api-route.ts) | Using SDK in Next.js (Pages Router) API handlers. |
+| [**Standalone Auth**](./standalone-auth.ts) | Simple script for signup/login without a framework. |
+| [**AI Chat**](./aiAIChat.example.ts) | Generated example for AI chat. |
+| [**Database Query**](./databaseDbQuery.example.ts) | Generated example for DB usage. |
+
 ## Running the Examples
 
 To run an example file from the examples directory:
