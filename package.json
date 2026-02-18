@@ -12,6 +12,7 @@
     "url": "https://github.com/aerostackdev/sdks/issues"
   },
   "homepage": "https://docs.aerostack.dev",
+  "publishConfig": { "access": "public" },
   "tshy": {
     "sourceDialects": [
       "@aerostack/sdk-node/source"
