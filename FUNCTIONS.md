@@ -30,10 +30,13 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await databaseDbQuery(sdk, {
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
   if (res.ok) {
     const { value: result } = res;

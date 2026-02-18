@@ -24,10 +24,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);
@@ -52,10 +55,13 @@ const sdk = new SDKCore({
 
 async function run() {
   const res = await databaseDbQuery(sdk, {
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
   if (res.ok) {
     const { value: result } = res;
@@ -72,7 +78,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.DbQueryRequestBody](../../sdk/models/operations/dbqueryrequestbody.md)                                                                                             | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.DbQueryRequest](../../sdk/models/operations/dbqueryrequest.md)                                                                                                     | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |

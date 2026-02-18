@@ -8,10 +8,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);

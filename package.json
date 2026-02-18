@@ -1,18 +1,8 @@
 {
   "name": "@aerostack/sdk-node",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": "Aerostack",
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aerostackdev/sdks.git",
-    "directory": "packages/node"
-  },
-  "bugs": {
-    "url": "https://github.com/aerostackdev/sdks/issues"
-  },
-  "homepage": "https://docs.aerostack.dev",
-  "publishConfig": { "access": "public" },
   "tshy": {
     "sourceDialects": [
       "@aerostack/sdk-node/source"
@@ -41,13 +31,11 @@
     "globals": "^15.14.0",
     "tshy": "^2.0.0",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.26.0",
-    "@types/ws": "^8.5.10"
+    "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
-    "zod": "^3.25.0 || ^4.0.0",
-    "ws": "^8.16.0",
-    "@aerostack/core": "file:../core"
+    "@aerostack/core": "file:../core",
+    "zod": "^3.25.0 || ^4.0.0"
   },
   "exports": {
     ".": {

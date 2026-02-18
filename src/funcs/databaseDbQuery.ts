@@ -3,7 +3,7 @@
  */
 
 import { SDKCore } from "../core.js";
-import { encodeJSON } from "../lib/encodings.js";
+import { encodeJSON, encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
@@ -32,7 +32,7 @@ import { Result } from "../sdk/types/fp.js";
  */
 export function databaseDbQuery(
   client: SDKCore,
-  request: operations.DbQueryRequestBody,
+  request: operations.DbQueryRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
@@ -56,7 +56,7 @@ export function databaseDbQuery(
 
 async function $do(
   client: SDKCore,
-  request: operations.DbQueryRequestBody,
+  request: operations.DbQueryRequest,
   options?: RequestOptions,
 ): Promise<
   [
@@ -76,20 +76,28 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => operations.DbQueryRequestBody$outboundSchema.parse(value),
+    (value) => operations.DbQueryRequest$outboundSchema.parse(value),
     "Input validation failed",
   );
   if (!parsed.ok) {
     return [parsed, { status: "invalid" }];
   }
   const payload = parsed.value;
-  const body = encodeJSON("body", payload, { explode: true });
+  const body = encodeJSON("body", payload.RequestBody, { explode: true });
 
   const path = pathToFunc("/db/query")();
 
   const headers = new Headers(compactMap({
     "Content-Type": "application/json",
     Accept: "application/json",
+    "X-Request-ID": encodeSimple("X-Request-ID", payload["X-Request-ID"], {
+      explode: false,
+      charEncoding: "none",
+    }),
+    "X-SDK-Version": encodeSimple("X-SDK-Version", payload["X-SDK-Version"], {
+      explode: false,
+      charEncoding: "none",
+    }),
   }));
 
   const secConfig = await extractSecurity(client._options.apiKeyAuth);

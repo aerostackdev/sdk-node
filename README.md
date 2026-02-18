@@ -30,6 +30,7 @@ caching, queues, storage, and AI services.
   * [Server Selection](#server-selection)
   * [Custom HTTP Client](#custom-http-client)
   * [Debugging](#debugging)
+  * [Backend Service Integration](#backend-service-integration)
 * [Development](#development)
   * [Maturity](#maturity)
   * [Contributions](#contributions)
@@ -48,25 +49,25 @@ The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https
 ### NPM
 
 ```bash
-npm add @aerostack/sdk-node
+npm add <UNSET>
 ```
 
 ### PNPM
 
 ```bash
-pnpm add @aerostack/sdk-node
+pnpm add <UNSET>
 ```
 
 ### Bun
 
 ```bash
-bun add @aerostack/sdk-node
+bun add <UNSET>
 ```
 
 ### Yarn
 
 ```bash
-yarn add @aerostack/sdk-node
+yarn add <UNSET>
 ```
 
 > [!NOTE]
@@ -93,10 +94,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);
@@ -128,10 +132,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);
@@ -276,10 +283,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   }, {
     retries: {
       strategy: "backoff",
@@ -320,10 +330,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);
@@ -359,10 +372,13 @@ const sdk = new SDK({
 async function run() {
   try {
     const result = await sdk.database.dbQuery({
-      sql: "SELECT * FROM users WHERE active = ?",
-      params: [
-        true,
-      ],
+      xSDKVersion: "0.1.0",
+      requestBody: {
+        sql: "SELECT * FROM users WHERE active = ?",
+        params: [
+          true,
+        ],
+      },
     });
 
     console.log(result);
@@ -411,7 +427,7 @@ You can override the default server globally by passing a server index to the `s
 
 | #   | Server                        | Description       |
 | --- | ----------------------------- | ----------------- |
-| 0   | `https://api.aerostack.dev/v1` | Production        |
+| 0   | `https://api.aerostack.ai/v1` | Production        |
 | 1   | `http://localhost:8787/v1`    | Local Development |
 
 #### Example
@@ -426,10 +442,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);
@@ -452,10 +471,13 @@ const sdk = new SDK({
 
 async function run() {
   const result = await sdk.database.dbQuery({
-    sql: "SELECT * FROM users WHERE active = ?",
-    params: [
-      true,
-    ],
+    xSDKVersion: "0.1.0",
+    requestBody: {
+      sql: "SELECT * FROM users WHERE active = ?",
+      params: [
+        true,
+      ],
+    },
   });
 
   console.log(result);

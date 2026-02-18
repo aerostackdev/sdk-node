@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod/v3";
+import { remap as remap$ } from "../../../lib/primitives.js";
 import { safeParse } from "../../../lib/schemas.js";
 import { Result as SafeParseResult } from "../../types/fp.js";
 import { SDKValidationError } from "../errors/sdkvalidationerror.js";
@@ -17,6 +18,18 @@ export type DbQueryRequestBody = {
    * Query parameters for prepared statements
    */
   params?: Array<any> | undefined;
+};
+
+export type DbQueryRequest = {
+  /**
+   * Unique request tracing ID
+   */
+  xRequestID?: string | undefined;
+  /**
+   * SDK version string
+   */
+  xSDKVersion?: string | undefined;
+  requestBody: DbQueryRequestBody;
 };
 
 export type DbQueryResponse = shared.ErrorResponse | shared.DbQueryResult;
@@ -43,6 +56,34 @@ export function dbQueryRequestBodyToJSON(
   return JSON.stringify(
     DbQueryRequestBody$outboundSchema.parse(dbQueryRequestBody),
   );
+}
+
+/** @internal */
+export type DbQueryRequest$Outbound = {
+  "X-Request-ID"?: string | undefined;
+  "X-SDK-Version"?: string | undefined;
+  RequestBody: DbQueryRequestBody$Outbound;
+};
+
+/** @internal */
+export const DbQueryRequest$outboundSchema: z.ZodType<
+  DbQueryRequest$Outbound,
+  z.ZodTypeDef,
+  DbQueryRequest
+> = z.object({
+  xRequestID: z.string().optional(),
+  xSDKVersion: z.string().optional(),
+  requestBody: z.lazy(() => DbQueryRequestBody$outboundSchema),
+}).transform((v) => {
+  return remap$(v, {
+    xRequestID: "X-Request-ID",
+    xSDKVersion: "X-SDK-Version",
+    requestBody: "RequestBody",
+  });
+});
+
+export function dbQueryRequestToJSON(dbQueryRequest: DbQueryRequest): string {
+  return JSON.stringify(DbQueryRequest$outboundSchema.parse(dbQueryRequest));
 }
 
 /** @internal */

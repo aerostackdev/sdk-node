@@ -15,7 +15,7 @@ export class Database extends ClientSDK {
    * Run a SQL query against your project database
    */
   async dbQuery(
-    request: operations.DbQueryRequestBody,
+    request: operations.DbQueryRequest,
     options?: RequestOptions,
   ): Promise<operations.DbQueryResponse> {
     return unwrapAsync(databaseDbQuery(
