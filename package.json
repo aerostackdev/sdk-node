@@ -1,6 +1,6 @@
 {
   "name": "@aerostack/sdk-node",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "author": "Aerostack",
   "type": "module",
   "repository": {
@@ -45,7 +45,8 @@
   },
   "dependencies": {
     "zod": "^3.25.0 || ^4.0.0",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "@aerostack/core": "file:../../../packages/core"
   },
   "exports": {
     ".": {
