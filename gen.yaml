@@ -32,7 +32,7 @@ generate:
   version: ""
   baseServerUrl: https://api.aerostack.ai/v1
 typescript:
-  version: 0.3.2
+  version: 0.3.3
   acceptHeaderEnum: true
   additionalDependencies:
     dependencies:

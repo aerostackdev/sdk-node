@@ -182,6 +182,10 @@ run();
 
 * [dbQuery](docs/sdks/database/README.md#dbquery) - Execute SQL query
 
+### [Gateway.Billing](docs/sdks/billing/README.md)
+
+* [gatewayBillingLog](docs/sdks/billing/README.md#gatewaybillinglog) - Log Gateway usage
+
 ### [Queue](docs/sdks/queue/README.md)
 
 * [queueEnqueue](docs/sdks/queue/README.md#queueenqueue) - Add job to queue
@@ -224,6 +228,7 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 - [`cacheCacheGet`](docs/sdks/cache/README.md#cacheget) - Get cached value
 - [`cacheCacheSet`](docs/sdks/cache/README.md#cacheset) - Set cached value
 - [`databaseDbQuery`](docs/sdks/database/README.md#dbquery) - Execute SQL query
+- [`gatewayBillingGatewayBillingLog`](docs/sdks/billing/README.md#gatewaybillinglog) - Log Gateway usage
 - [`queueQueueEnqueue`](docs/sdks/queue/README.md#queueenqueue) - Add job to queue
 - [`servicesServicesInvoke`](docs/sdks/services/README.md#servicesinvoke) - Invoke another service
 - [`storageStorageUpload`](docs/sdks/storage/README.md#storageupload) - Upload file to storage

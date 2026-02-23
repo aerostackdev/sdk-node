@@ -11,6 +11,7 @@ export * from "./configure.js";
 export * from "./dbquery.js";
 export * from "./delete.js";
 export * from "./deletebytype.js";
+export * from "./gatewaybillinglog.js";
 export * from "./ingest.js";
 export * from "./listtypes.js";
 export * from "./query.js";

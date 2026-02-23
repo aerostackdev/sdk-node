@@ -7,6 +7,7 @@ import { Ai } from "./ai.js";
 import { Authentication } from "./authentication.js";
 import { Cache } from "./cache.js";
 import { Database } from "./database.js";
+import { Gateway } from "./gateway.js";
 import { Queue } from "./queue.js";
 import { Services } from "./services.js";
 import { Storage } from "./storage.js";
@@ -45,5 +46,10 @@ export class SDK extends ClientSDK {
   private _services?: Services;
   get services(): Services {
     return (this._services ??= new Services(this._options));
+  }
+
+  private _gateway?: Gateway;
+  get gateway(): Gateway {
+    return (this._gateway ??= new Gateway(this._options));
   }
 }
