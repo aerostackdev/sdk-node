@@ -36,7 +36,7 @@
     "ws": "^8.19.0"
   },
   "dependencies": {
-    "@aerostack/core": "file:../core",
+    "@aerostack/core": "^0.6.0",
     "zod": "^3.25.0 || ^4.0.0"
   },
   "exports": {
