@@ -1,48 +1,51 @@
 /**
  * Aerostack Realtime Client for Node.js SDK
- * Provides WebSocket-based real-time data subscription for server-side usage.
- * 
- * This is NOT auto-generated — it is a hand-written extension for the Node SDK.
+ * Production-hardened WebSocket client for server-side usage.
  */
 
-type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+export type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
 
-interface RealtimeMessage {
+export interface RealtimeMessage {
     type: string;
     topic: string;
     [key: string]: any;
 }
 
-interface RealtimeSubscriptionOptions {
+export interface RealtimeSubscriptionOptions {
     event?: RealtimeEvent;
     filter?: Record<string, any>;
 }
 
-type RealtimeCallback = (payload: any) => void;
+export type RealtimeCallback<T = any> = (payload: RealtimePayload<T>) => void;
 
-interface NodeRealtimeOptions {
-    /** Base API URL (e.g. https://api.aerostack.ai/v1) */
-    serverUrl: string;
-    /** Project ID to subscribe to */
-    projectId: string;
-    /** API Key for authentication (recommended for server-side) */
-    apiKey?: string | undefined;
-    /** User ID (optional) */
-    userId?: string | undefined;
-    /** Bearer token (optional, for user-context connections) */
-    token?: string | undefined;
+export interface RealtimePayload<T = any> {
+    type: 'db_change' | 'chat_message';
+    topic: string;
+    operation: RealtimeEvent;
+    data: T;
+    old?: T;
+    timestamp?: string;
+    [key: string]: any;
 }
 
-// Constants for exponential backoff
+export interface NodeRealtimeOptions {
+    serverUrl: string;
+    projectId: string;
+    apiKey?: string | undefined;
+    userId?: string | undefined;
+    token?: string | undefined;
+    maxReconnectAttempts?: number;
+}
+
 const BASE_RECONNECT_MS = 1000;
 const MAX_RECONNECT_MS = 30000;
 const JITTER_FACTOR = 0.3;
 
-export class RealtimeSubscription {
+export class RealtimeSubscription<T = any> {
     private client: NodeRealtimeClient;
     private topic: string;
     private options: RealtimeSubscriptionOptions;
-    private callbacks: Set<RealtimeCallback> = new Set();
+    private callbacks: Map<RealtimeEvent, Set<RealtimeCallback<T>>> = new Map();
     private _isSubscribed: boolean = false;
 
     constructor(client: NodeRealtimeClient, topic: string, options: RealtimeSubscriptionOptions = {}) {
@@ -51,8 +54,11 @@ export class RealtimeSubscription {
         this.options = options;
     }
 
-    on(_event: RealtimeEvent, callback: RealtimeCallback): this {
-        this.callbacks.add(callback);
+    on(event: RealtimeEvent, callback: RealtimeCallback<T>): this {
+        if (!this.callbacks.has(event)) {
+            this.callbacks.set(event, new Set());
+        }
+        this.callbacks.get(event)!.add(callback);
         return this;
     }
 
@@ -80,21 +86,18 @@ export class RealtimeSubscription {
     get isSubscribed() { return this._isSubscribed; }
 
     /** @internal */
-    _emit(payload: any): void {
+    _emit(payload: RealtimePayload<T>): void {
         const event = payload.operation as RealtimeEvent;
-        const requestedEvent = this.options.event || '*';
-
-        if (requestedEvent === '*' || requestedEvent === event) {
-            for (const cb of this.callbacks) {
-                try {
-                    cb(payload);
-                } catch (e) {
-                    console.error('Realtime callback error:', e);
-                }
-            }
-        }
+        this.callbacks.get(event)?.forEach(cb => {
+            try { cb(payload); } catch (e) { console.error('Realtime callback error:', e); }
+        });
+        this.callbacks.get('*')?.forEach(cb => {
+            try { cb(payload); } catch (e) { console.error('Realtime callback error:', e); }
+        });
     }
 }
+
+export type RealtimeStatus = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
 export class NodeRealtimeClient {
     private wsUrl: string;
@@ -102,29 +105,63 @@ export class NodeRealtimeClient {
     private apiKey: string | undefined;
     private userId: string | undefined;
     private token: string | undefined;
-    private ws: any = null; // WebSocket instance (from 'ws' or global)
+    private ws: any = null;
     private subscriptions: Map<string, RealtimeSubscription> = new Map();
     private reconnectTimer: any = null;
     private heartbeatTimer: any = null;
     private reconnectAttempts: number = 0;
-    private _connected: boolean = false;
+    private _sendQueue: any[] = [];
+    private _connectingPromise: Promise<void> | null = null;
+    private _status: RealtimeStatus = 'idle';
+    private _statusListeners: Set<(s: RealtimeStatus) => void> = new Set();
+    private _lastPong: number = 0;
+    private _maxReconnectAttempts: number;
+    private _maxRetriesListeners: Set<() => void> = new Set();
 
     constructor(options: NodeRealtimeOptions) {
-        // Convert HTTP URL to WS URL
         const base = options.serverUrl.replace(/\/v1\/?$/, '').replace(/^http/, 'ws');
         this.wsUrl = `${base}/api/realtime`;
         this.projectId = options.projectId;
         this.apiKey = options.apiKey;
         this.userId = options.userId;
         this.token = options.token;
+        this._maxReconnectAttempts = options.maxReconnectAttempts ?? Infinity;
     }
 
-    get connected(): boolean { return this._connected; }
+    get status(): RealtimeStatus { return this._status; }
+    get connected(): boolean { return this._status === 'connected'; }
+
+    onStatusChange(cb: (status: RealtimeStatus) => void): () => void {
+        this._statusListeners.add(cb);
+        return () => this._statusListeners.delete(cb);
+    }
+
+    onMaxRetriesExceeded(cb: () => void): () => void {
+        this._maxRetriesListeners.add(cb);
+        return () => this._maxRetriesListeners.delete(cb);
+    }
+
+    private _setStatus(s: RealtimeStatus) {
+        this._status = s;
+        this._statusListeners.forEach(cb => cb(s));
+    }
+
+    setToken(newToken: string): void {
+        this.token = newToken;
+        this._send({ type: 'auth', token: newToken });
+    }
 
     async connect(): Promise<void> {
-        if (this.ws) return;
+        if (this.ws && this._status === 'connected') return;
+        if (this._connectingPromise) return this._connectingPromise;
+        this._connectingPromise = this._doConnect().finally(() => {
+            this._connectingPromise = null;
+        });
+        return this._connectingPromise;
+    }
 
-        // Build URL with query params
+    private async _doConnect(): Promise<void> {
+        this._setStatus('connecting');
         const url = new URL(this.wsUrl);
         if (this.apiKey) {
             url.searchParams.set('apiKey', this.apiKey);
@@ -136,8 +173,6 @@ export class NodeRealtimeClient {
 
         return new Promise(async (resolve, reject) => {
             try {
-                // Try native WebSocket first (Bun, Deno, modern Node 22+)
-                // Fall back to 'ws' package for older Node versions
                 let WsClass: any;
                 if (typeof globalThis.WebSocket !== 'undefined') {
                     WsClass = globalThis.WebSocket;
@@ -146,19 +181,20 @@ export class NodeRealtimeClient {
                         const ws = await import('ws');
                         WsClass = ws.default || ws;
                     } catch {
-                        throw new Error(
-                            'WebSocket not available. Install the "ws" package: npm install ws'
-                        );
+                        throw new Error('WebSocket not available. Install "ws" package.');
                     }
                 }
 
                 this.ws = new WsClass(url.toString());
 
                 this.ws.onopen = () => {
-                    this._connected = true;
-                    this.reconnectAttempts = 0; // Reset backoff on success
+                    this._setStatus('connected');
+                    this.reconnectAttempts = 0;
+                    this._lastPong = Date.now();
                     this.startHeartbeat();
-                    // Re-subscribe existing topics
+                    while (this._sendQueue.length > 0) {
+                        this.ws.send(JSON.stringify(this._sendQueue.shift()));
+                    }
                     for (const sub of this.subscriptions.values()) {
                         if (sub.isSubscribed) sub.subscribe();
                     }
@@ -176,61 +212,80 @@ export class NodeRealtimeClient {
                 };
 
                 this.ws.onclose = () => {
-                    this._connected = false;
+                    this._setStatus('reconnecting');
                     this.stopHeartbeat();
                     this.ws = null;
                     this.scheduleReconnect();
                 };
 
                 this.ws.onerror = (err: any) => {
-                    if (!this._connected) {
-                        reject(err);
-                    }
+                    console.error('Realtime connection error:', err);
+                    this._setStatus('disconnected');
+                    reject(err);
                 };
             } catch (e) {
+                this._setStatus('disconnected');
                 reject(e);
             }
         });
     }
 
     disconnect(): void {
+        this._setStatus('disconnected');
         this.stopReconnect();
         this.stopHeartbeat();
         if (this.ws) {
             this.ws.close();
             this.ws = null;
         }
-        this._connected = false;
+        this._sendQueue = [];
     }
 
-    channel(topic: string, options: RealtimeSubscriptionOptions = {}): RealtimeSubscription {
+    channel<T = any>(topic: string, options: RealtimeSubscriptionOptions = {}): RealtimeSubscription<T> {
         const fullTopic = topic.includes('/') ? topic : `table/${topic}/${this.projectId}`;
-
         let sub = this.subscriptions.get(fullTopic);
         if (!sub) {
-            sub = new RealtimeSubscription(this, fullTopic, options);
+            sub = new RealtimeSubscription<T>(this, fullTopic, options);
             this.subscriptions.set(fullTopic, sub);
         }
-        return sub;
+        return sub as RealtimeSubscription<T>;
+    }
+
+    sendChat(roomId: string, text: string): void {
+        this._send({ type: 'chat', roomId, text });
+    }
+
+    chatRoom(roomId: string): RealtimeSubscription {
+        return this.channel(`chat/${roomId}/${this.projectId}`);
     }
 
     /** @internal */
     _send(data: any): void {
-        if (this.ws && this._connected) {
+        if (this.ws && this._status === 'connected') {
             this.ws.send(JSON.stringify(data));
+        } else {
+            this._sendQueue.push(data);
         }
     }
 
     private handleMessage(data: RealtimeMessage): void {
+        if (data.type === 'pong') {
+            this._lastPong = Date.now();
+            return;
+        }
         if (data.type === 'db_change' || data.type === 'chat_message') {
             const sub = this.subscriptions.get(data.topic);
-            if (sub) sub._emit(data);
+            if (sub) sub._emit(data as any);
         }
     }
 
     private startHeartbeat(): void {
         this.heartbeatTimer = setInterval(() => {
             this._send({ type: 'ping' });
+            if (this._lastPong > 0 && Date.now() - this._lastPong > 70000) {
+                console.warn('Realtime: no pong received, forcing reconnect');
+                this.ws?.close();
+            }
         }, 30000);
     }
 
@@ -241,20 +296,19 @@ export class NodeRealtimeClient {
         }
     }
 
-    /** Exponential backoff with jitter */
     private scheduleReconnect(): void {
         this.stopReconnect();
-        const delay = Math.min(
-            BASE_RECONNECT_MS * Math.pow(2, this.reconnectAttempts),
-            MAX_RECONNECT_MS
-        );
+        if (this.reconnectAttempts >= this._maxReconnectAttempts) {
+            this._setStatus('disconnected');
+            this._maxRetriesListeners.forEach(cb => cb());
+            return;
+        }
+        const delay = Math.min(BASE_RECONNECT_MS * Math.pow(2, this.reconnectAttempts), MAX_RECONNECT_MS);
         const jitter = delay * JITTER_FACTOR * Math.random();
-        const finalDelay = delay + jitter;
-
         this.reconnectAttempts++;
         this.reconnectTimer = setTimeout(() => {
             this.connect().catch(() => { });
-        }, finalDelay);
+        }, delay + jitter);
     }
 
     private stopReconnect(): void {
