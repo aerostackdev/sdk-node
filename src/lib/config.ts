@@ -14,7 +14,7 @@ export const ServerList = [
   /**
    * Production
    */
-  "https://api.aerostack.ai/v1",
+  "https://api.aerocall.ai/v1",
   /**
    * Local Development
    */
