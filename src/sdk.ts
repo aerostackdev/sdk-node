@@ -13,6 +13,7 @@ export interface SDKOptions {
     /** Alias for serverUrl for backward compatibility */
     serverURL?: string;
     maxReconnectAttempts?: number;
+    projectId?: string;
 }
 
 /** 
@@ -77,6 +78,7 @@ export class SDK {
         this.realtime = new NodeRealtimeClient({
             serverUrl,
             apiKey: apiKey,
+            projectId: options.projectId,
             maxReconnectAttempts: options.maxReconnectAttempts
         });
     }
