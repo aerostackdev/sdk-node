@@ -1,5 +1,6 @@
 import * as gen from './_generated/index.js';
 import { NodeRealtimeClient } from './realtime.js';
+import { AerostackClient } from '@aerostack/core';
 
 export interface SDKOptions {
     /** 
@@ -42,6 +43,11 @@ class DatabaseFacade {
 /**
  * Aerostack SDK Facade for Node.js.
  * Provides a clean, ergonomic API for all Aerostack services.
+ *
+ * Use `sdk.rpc` for the full enterprise API surface (cache bulk ops,
+ * storage CRUD, db batch, queue job tracking, vector enhancements).
+ * The top-level properties (cache, storage, etc.) use OpenAPI-generated
+ * classes and are kept for backward compatibility.
  */
 export class SDK {
     public readonly database: DatabaseFacade;
@@ -53,6 +59,14 @@ export class SDK {
     public readonly services: gen.ServicesApi;
     public readonly gateway: gen.GatewayApi;
     public readonly realtime: NodeRealtimeClient;
+    /**
+     * Full enterprise RPC client — exposes all new methods:
+     * cache.list/keys/getMany/setMany/deleteMany/flush/expire/increment
+     * storage.get/getUrl/list/delete/exists/getMetadata/copy/move
+     * db.batch, queue.getJob/listJobs/cancelJob
+     * ai.search.update/get/count
+     */
+    public readonly rpc: AerostackClient;
 
     private config: gen.Configuration;
 
@@ -74,6 +88,13 @@ export class SDK {
         this.ai = new gen.AIApi(this.config);
         this.services = new gen.ServicesApi(this.config);
         this.gateway = new gen.GatewayApi(this.config);
+
+        // Enterprise client — full API surface
+        this.rpc = new AerostackClient({
+            baseUrl: serverUrl,
+            apiKey,
+            projectId: options.projectId,
+        });
 
         this.realtime = new NodeRealtimeClient({
             serverUrl,
@@ -100,6 +121,10 @@ export class SDK {
         (this as any).ai = new gen.AIApi(this.config);
         (this as any).services = new gen.ServicesApi(this.config);
         (this as any).gateway = new gen.GatewayApi(this.config);
+        (this as any).rpc = new AerostackClient({
+            baseUrl: this.config.basePath,
+            apiKey,
+        });
     }
 }
 
