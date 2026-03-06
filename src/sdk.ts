@@ -105,6 +105,105 @@ export class SDK {
     }
 
     /**
+     * Stream a gateway chat completion with token-by-token callbacks.
+     *
+     * @example
+     * await sdk.streamGateway({
+     *   apiSlug: 'my-chatbot',
+     *   messages: [{ role: 'user', content: 'Hello' }],
+     *   consumerKey: 'ask_live_...',
+     *   onToken: (delta) => process.stdout.write(delta),
+     * });
+     */
+    async streamGateway(opts: {
+        apiSlug: string;
+        messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+        consumerKey?: string;
+        token?: string;
+        systemPrompt?: string;
+        onToken?: (delta: string) => void;
+        onDone?: (usage: { tokensUsed: number }) => void;
+        onError?: (error: Error) => void;
+        signal?: AbortSignal;
+    }): Promise<{ text: string; tokensUsed: number }> {
+        const baseUrl = this.config.basePath.replace(/\/v1\/?$/, '');
+        const endpoint = `${baseUrl}/api/gateway/${opts.apiSlug}/v1/chat/completions`;
+
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (opts.consumerKey) {
+            headers['Authorization'] = `Bearer ${opts.consumerKey}`;
+        } else if (opts.token) {
+            headers['Authorization'] = `Bearer ${opts.token}`;
+        }
+
+        const messages = opts.systemPrompt
+            ? [{ role: 'system' as const, content: opts.systemPrompt }, ...opts.messages]
+            : opts.messages;
+
+        let text = '';
+        let totalTokens = 0;
+        let estimatedTokens = 0;
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ messages, stream: true, stream_options: { include_usage: true } }),
+                signal: opts.signal,
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: 'Request failed' }));
+                throw new Error((err as any).error || `HTTP ${response.status}`);
+            }
+            if (!response.body) throw new Error('No response body');
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+
+                for (const line of lines) {
+                    if (!line.startsWith('data: ')) continue;
+                    const payload = line.slice(6).trim();
+                    if (payload === '[DONE]') {
+                        reader.cancel();
+                        const result = { text, tokensUsed: totalTokens || estimatedTokens };
+                        opts.onDone?.(result);
+                        return result;
+                    }
+                    try {
+                        const parsed = JSON.parse(payload);
+                        const delta = parsed.choices?.[0]?.delta?.content;
+                        if (delta) {
+                            text += delta;
+                            opts.onToken?.(delta);
+                            estimatedTokens += Math.ceil(delta.length / 4);
+                        }
+                        if (parsed.usage?.total_tokens) totalTokens = parsed.usage.total_tokens;
+                        else if (parsed.usage?.completion_tokens) totalTokens = parsed.usage.completion_tokens;
+                    } catch { /* skip malformed frames */ }
+                }
+            }
+
+            const result = { text, tokensUsed: totalTokens || estimatedTokens };
+            opts.onDone?.(result);
+            return result;
+        } catch (err: any) {
+            if (err.name === 'AbortError') return { text, tokensUsed: totalTokens || estimatedTokens };
+            const error = err instanceof Error ? err : new Error(String(err));
+            opts.onError?.(error);
+            throw error;
+        }
+    }
+
+    /**
      * Update the API key for subsequent requests.
      */
     setApiKey(apiKey: string): void {
