@@ -17,8 +17,87 @@ export interface SDKOptions {
     projectId?: string;
 }
 
-/** 
- * Compatibility wrapper for Database API 
+/**
+ * Ergonomic wrapper for Cache API — exposes clean method names
+ * (get/set/delete) instead of the verbose OpenAPI names (cacheGet/cacheSet).
+ * Covers all 11 cache operations supported by the Aerostack RPC API.
+ */
+class CacheFacade {
+    constructor(private api: gen.CacheApi) { }
+
+    /** Get a cached value by key. Returns null if not found. */
+    async get<T = any>(key: string): Promise<T | null> {
+        const res = await this.api.cacheGet({ cacheGetRequest: { key } });
+        return res._exists ? (res.value as T) : null;
+    }
+
+    /** Set a cached value. Optional ttl in seconds. */
+    async set(key: string, value: any, ttl?: number): Promise<void> {
+        await this.api.cacheSet({ cacheSetRequest: { key, value, ...(ttl !== undefined && { ttl }) } });
+    }
+
+    /** Delete a cached key. */
+    async delete(key: string): Promise<void> {
+        await this.api.cacheDelete({ cacheGetRequest: { key } });
+    }
+
+    /** Check if a key exists without fetching its value. */
+    async exists(key: string): Promise<boolean> {
+        const res = await this.api.cacheGet({ cacheGetRequest: { key } });
+        return res._exists ?? false;
+    }
+
+    /** List cache keys with optional prefix (paginated). */
+    async list(prefix?: string, limit?: number, cursor?: string) {
+        return this.api.cacheList({ cacheListRequest: { prefix, limit, cursor } });
+    }
+
+    /** Get all keys matching prefix (auto-paginates, hard cap 10k). */
+    async keys(prefix?: string): Promise<string[]> {
+        const res = await this.api.cacheKeys({ cacheKeysRequest: { prefix } });
+        return res.keys ?? [];
+    }
+
+    /** Fetch up to 100 keys in a single call. */
+    async getMany(keys: string[]) {
+        const res = await this.api.cacheGetMany({ cacheGetManyRequest: { keys } });
+        return res.results ?? [];
+    }
+
+    /** Store up to 100 key-value pairs in a single call. */
+    async setMany(entries: Array<{ key: string; value: any; ttl?: number }>) {
+        return this.api.cacheSetMany({ cacheSetManyRequest: { entries } });
+    }
+
+    /** Delete up to 500 keys in a single call. */
+    async deleteMany(keys: string[]) {
+        return this.api.cacheDeleteMany({ cacheDeleteManyRequest: { keys } });
+    }
+
+    /** Delete all keys matching prefix (or all project keys). Hard cap 10k. */
+    async flush(prefix?: string) {
+        return this.api.cacheFlush({ cacheFlushRequest: { prefix } });
+    }
+
+    /** Update TTL of an existing key (get-then-put, not atomic). */
+    async expire(key: string, ttl: number) {
+        return this.api.cacheExpire({ cacheExpireRequest: { key, ttl } });
+    }
+
+    /** Increment a numeric counter. Initializes to initialValue (default 0) if key doesn't exist. */
+    async increment(key: string, amount?: number, initialValue?: number, ttl?: number): Promise<number | undefined> {
+        const res = await this.api.cacheIncrement({ cacheIncrementRequest: { key, amount, initialValue, ttl } });
+        return res.value;
+    }
+}
+
+/**
+ * Compatibility wrapper for Database API.
+ *
+ * IMPORTANT: DDL statements (CREATE TABLE, ALTER TABLE, DROP TABLE, etc.)
+ * are NOT supported via the SDK — the RPC API blocks all DDL for security.
+ * Use Wrangler migrations for schema changes:
+ *   wrangler d1 migrations apply <db-name> [--local]
  */
 class DatabaseFacade {
     constructor(private api: gen.DatabaseApi) { }
@@ -44,15 +123,13 @@ class DatabaseFacade {
  * Aerostack SDK Facade for Node.js.
  * Provides a clean, ergonomic API for all Aerostack services.
  *
- * Use `sdk.rpc` for the full enterprise API surface (cache bulk ops,
- * storage CRUD, db batch, queue job tracking, vector enhancements).
- * The top-level properties (cache, storage, etc.) use OpenAPI-generated
- * classes and are kept for backward compatibility.
+ * `sdk.cache` exposes all 11 cache operations with clean names (get/set/delete/etc).
+ * `sdk.rpc` exposes the full enterprise client for db.batch, queue.getJob, ai.search.update, etc.
  */
 export class SDK {
     public readonly database: DatabaseFacade;
     public readonly auth: gen.AuthenticationApi;
-    public readonly cache: gen.CacheApi;
+    public readonly cache: CacheFacade;
     public readonly queue: gen.QueueApi;
     public readonly storage: gen.StorageApi;
     public readonly ai: gen.AIApi;
@@ -82,7 +159,7 @@ export class SDK {
 
         this.database = new DatabaseFacade(new gen.DatabaseApi(this.config));
         this.auth = new gen.AuthenticationApi(this.config);
-        this.cache = new gen.CacheApi(this.config);
+        this.cache = new CacheFacade(new gen.CacheApi(this.config));
         this.queue = new gen.QueueApi(this.config);
         this.storage = new gen.StorageApi(this.config);
         this.ai = new gen.AIApi(this.config);
@@ -214,7 +291,7 @@ export class SDK {
         });
         (this as any).database = new DatabaseFacade(new gen.DatabaseApi(this.config));
         (this as any).auth = new gen.AuthenticationApi(this.config);
-        (this as any).cache = new gen.CacheApi(this.config);
+        (this as any).cache = new CacheFacade(new gen.CacheApi(this.config));
         (this as any).queue = new gen.QueueApi(this.config);
         (this as any).storage = new gen.StorageApi(this.config);
         (this as any).ai = new gen.AIApi(this.config);
