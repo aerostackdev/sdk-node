@@ -1,6 +1,6 @@
 {
   "name": "@aerostack/sdk-node",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "Aerostack",
   "type": "module",
   "tshy": {
