@@ -148,7 +148,7 @@ export class SDK {
     private config: gen.Configuration;
 
     constructor(options: SDKOptions = {}) {
-        const serverUrl = options.serverUrl || options.serverURL || 'https://api.aerocall.ai/v1';
+        const serverUrl = options.serverUrl || options.serverURL || 'https://api.aerostack.dev/v1';
         const apiKey = options.apiKey || options.apiKeyAuth;
 
         this.config = new gen.Configuration({

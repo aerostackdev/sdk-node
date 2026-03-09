@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = "https://api.aerocall.ai/v1".replace(/\/+$/, "");
+export const BASE_PATH = "https://api.aerostack.dev/v1".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path
