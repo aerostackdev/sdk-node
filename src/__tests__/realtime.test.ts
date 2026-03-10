@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NodeRealtimeClient, RealtimeSubscription } from '../realtime';
+import { NodeRealtimeClient, RealtimeSubscription } from '../realtime.js';
 
 // ─── Mock WebSocket ───────────────────────────────────────────
 
@@ -316,7 +316,7 @@ describe('NodeRealtimeClient', () => {
         projectId: 'proj-1',
       });
       const statuses: string[] = [];
-      client.onStatusChange(s => statuses.push(s));
+      client.onStatusChange((s: string) => statuses.push(s));
 
       const connectPromise = client.connect();
       await vi.advanceTimersByTimeAsync(10);

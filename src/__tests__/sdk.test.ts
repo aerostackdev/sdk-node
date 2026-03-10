@@ -59,7 +59,7 @@ vi.mock('@aerostack/core', () => {
   };
 });
 
-import { SDK, Aerostack, createClient } from '../sdk';
+import { SDK, Aerostack, createClient } from '../sdk.js';
 
 describe('SDK', () => {
   describe('constructor', () => {
@@ -295,7 +295,7 @@ describe('SDK', () => {
       await sdk.streamGateway({
         apiSlug: 'bot',
         messages: [{ role: 'user', content: 'Hi' }],
-        onToken: (delta) => tokens.push(delta),
+        onToken: (delta: string) => tokens.push(delta),
       });
 
       expect(tokens).toEqual(['Hi', ' there']);
@@ -313,7 +313,7 @@ describe('SDK', () => {
       await sdk.streamGateway({
         apiSlug: 'bot',
         messages: [{ role: 'user', content: 'Hi' }],
-        onDone: (result) => { doneResult = result; },
+        onDone: (result: any) => { doneResult = result; },
       });
 
       expect(doneResult.tokensUsed).toBe(10);
@@ -349,7 +349,7 @@ describe('SDK', () => {
         await sdk.streamGateway({
           apiSlug: 'bot',
           messages: [{ role: 'user', content: 'Hi' }],
-          onError: (err) => { capturedError = err; },
+          onError: (err: Error) => { capturedError = err; },
         });
       } catch {
         // Expected
