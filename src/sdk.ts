@@ -28,7 +28,10 @@ class CacheFacade {
     /** Get a cached value by key. Returns null if not found. */
     async get<T = any>(key: string): Promise<T | null> {
         const res = await this.api.cacheGet({ cacheGetRequest: { key } });
-        return res._exists ? (res.value as T) : null;
+        // _exists is the TS property name for the JSON `exists` field (codegen convention).
+        // Fall back to value presence in case the API omits the exists field on a hit.
+        const hit = res._exists ?? (res.value !== null && res.value !== undefined);
+        return hit ? (res.value as T) : null;
     }
 
     /** Set a cached value. Optional ttl in seconds. */
@@ -44,7 +47,10 @@ class CacheFacade {
     /** Check if a key exists without fetching its value. */
     async exists(key: string): Promise<boolean> {
         const res = await this.api.cacheGet({ cacheGetRequest: { key } });
-        return res._exists ?? false;
+        // Explicit false wins. If _exists is undefined, fall back to value presence.
+        if (res._exists === false) return false;
+        if (res._exists === true) return true;
+        return res.value !== null && res.value !== undefined;
     }
 
     /** List cache keys with optional prefix (paginated). */
