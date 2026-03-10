@@ -99,6 +99,7 @@ export class RealtimeSubscription<T = any> {
         });
         this._isSubscribed = false;
         this.callbacks.clear();
+        this.client._removeSubscription(this.topic);
     }
 
     get isSubscribed() { return this._isSubscribed; }
@@ -227,8 +228,6 @@ export class NodeRealtimeClient {
     private async _doConnect(): Promise<void> {
         this._setStatus('connecting');
         const url = new URL(this.wsUrl);
-        if (this.apiKey) url.searchParams.set('apiKey', this.apiKey);
-        if (this.token) url.searchParams.set('token', this.token);
         if (this.projectId) url.searchParams.set('projectId', this.projectId);
 
         return new Promise(async (resolve, reject) => {
@@ -245,7 +244,14 @@ export class NodeRealtimeClient {
                     }
                 }
 
-                this.ws = new WsClass(url.toString());
+                // SECURITY: Pass credentials via Sec-WebSocket-Protocol header — never as URL query params
+                // (URL params appear in CDN logs, browser history, and Referer headers).
+                const protocols: string[] = [];
+                if (this.apiKey) protocols.push(`aerostack-key.${this.apiKey}`);
+                if (this.token) protocols.push(`aerostack-token.${this.token}`);
+                if (protocols.length > 0) protocols.push('aerostack-v1');
+                const protocolsArg = protocols.length > 0 ? protocols : undefined;
+                this.ws = protocolsArg ? new WsClass(url.toString(), protocolsArg) : new WsClass(url.toString());
 
                 this.ws!.onopen = () => {
                     this._setStatus('connected');
@@ -302,6 +308,9 @@ export class NodeRealtimeClient {
     }
 
     channel<T = any>(topic: string, options: RealtimeSubscriptionOptions = {}): RealtimeSubscription<T> {
+        if (!this.projectId) {
+            throw new Error('projectId is required for channel subscriptions. Set it in NodeRealtimeOptions.');
+        }
         let fullTopic: string;
         if (!topic.includes('/')) {
             fullTopic = `table/${topic}/${this.projectId}`;
@@ -326,6 +335,11 @@ export class NodeRealtimeClient {
     /** @internal — Generate unique message ID for ack tracking */
     _generateId(): string {
         return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+
+    /** @internal — Remove a subscription from the map (called on unsubscribe) */
+    _removeSubscription(topic: string): void {
+        this.subscriptions.delete(topic);
     }
 
     /** @internal */
