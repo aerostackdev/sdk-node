@@ -1,6 +1,6 @@
 {
   "name": "@aerostack/sdk-node",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "author": "Aerostack",
   "type": "module",
   "tshy": {
@@ -61,5 +61,12 @@
   },
   "main": "./dist/commonjs/index.js",
   "types": "./dist/commonjs/index.d.ts",
-  "module": "./dist/esm/index.js"
+  "module": "./dist/esm/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
