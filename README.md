@@ -570,7 +570,7 @@ const sdk = new SDK({ debugLogger: console });
 This SDK is an **HTTP client** that makes API calls to the Aerostack backend. It's ideal for:
 
 ✅ **Use cases**:
-- Calling Aerostack Auth/E-commerce APIs from backend services (Node.js, Express, Nest.js)
+- Calling Aerostack Auth APIs from backend services (Node.js, Express, Nest.js)
 - Integrating Aerostack features into existing applications
 - Building API wrappers and middleware
 
