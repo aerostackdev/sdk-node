@@ -242,7 +242,7 @@ describe('SDK', () => {
 
       expect(result.text).toBe('Hello');
       expect(mockFetch).toHaveBeenCalledOnce();
-      const [url, opts] = mockFetch.mock.calls[0];
+      const [url, opts] = mockFetch.mock.calls[0]!;
       expect(url).toBe('https://api.test.com/api/gateway/my-chatbot/v1/chat/completions');
       expect(opts.headers.Authorization).toBe('Bearer ask_live_123');
     });
@@ -261,7 +261,7 @@ describe('SDK', () => {
         token: 'jwt-token',
       });
 
-      expect(mockFetch.mock.calls[0][1].headers.Authorization).toBe('Bearer jwt-token');
+      expect(mockFetch.mock.calls[0]![1].headers.Authorization).toBe('Bearer jwt-token');
     });
 
     it('should prepend system prompt', async () => {
@@ -278,7 +278,7 @@ describe('SDK', () => {
         systemPrompt: 'You are helpful',
       });
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      const body = JSON.parse(mockFetch.mock.calls[0]![1].body);
       expect(body.messages[0]).toEqual({ role: 'system', content: 'You are helpful' });
       expect(body.messages[1]).toEqual({ role: 'user', content: 'Hi' });
     });

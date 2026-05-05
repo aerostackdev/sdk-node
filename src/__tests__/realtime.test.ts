@@ -393,13 +393,13 @@ describe('NodeRealtimeClient', () => {
       const result = await client._fetchHistory('room/test', 25, 9999);
       expect(result).toEqual([{ id: '1' }]);
 
-      const url = new URL(mockFetch.mock.calls[0][0]);
+      const url = new URL(mockFetch.mock.calls[0]![0]);
       expect(url.pathname).toBe('/api/v1/public/realtime/history');
       expect(url.searchParams.get('room')).toBe('room/test');
       expect(url.searchParams.get('limit')).toBe('25');
       expect(url.searchParams.get('before')).toBe('9999');
 
-      const headers = mockFetch.mock.calls[0][1].headers;
+      const headers = mockFetch.mock.calls[0]![1].headers;
       expect(headers['X-Aerostack-Key']).toBe('my-key');
       expect(headers['Authorization']).toBe('Bearer my-token');
     });
